@@ -1,0 +1,51 @@
+{
+  "type": "service_account",
+  "project_id": "red-social-memes",
+  "private_key_id": "ae45c6d8e886a75ee4278565e5c0d93d83814c47",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDGVh/3cgjIfdlF\nPLHRAcib9JY05UQteVi59/CcLllmRfa/jGWmCpjgO+WaRULvuLs5T3dWQMjD3vVI\nd4D2nnTruCBbLd9gdtg1/+FErFhiob9aDdkQzmGbRn85pqGuu7J9FRZgD/sU88t7\nQ6paFm1UQk3pWckK6tBKl1z7iZy6B/sb4/kQMzOiPOKC8RSF5ojW/1CoS7nNqy82\nCkc6u6H804sBEvmS4jAHEKPf7vq1xzYYeiEWjBXmikj5tYGSdk9ZuE0oDZ/C+igI\nvUz+LFyFhYsDtNDJ1LEwaN8wE9FsEDqHBE/0v8QNvtZeev4O4jhyJoKBQ495MXaO\nNv/CZvHhAgMBAAECggEAJCARyH9TzDjn9y178ebSRF3DcjUEOwgsOgtIHxpuHCvI\nKtGGvjyV5dnjEztkWseaCnFH+kTojIyyvpVNvx3TjA/IjPMJCcf7z7IgtOJzYtu1\nP9Df5ajBrIelqrmIH4x+kTvjDHI8uG9Dc9s6Txhgp4VALa216bAlakCxpftFubhi\nIj/UbcofUBDu0f/vrdg5f3s5q6wixI9YP32hZr8KAZ/A3wnVziF52Yg+6sufHVkw\neq7DFHxRICXLMsvLDafowNWL4HrbsSDHOG9j0hk0qgui0b9y+mx5YX8Uw0YaUrzR\nm03DRikBe7SYrsmy8WCqLX3CnSbxW3wsuMrJwe2vsQKBgQDxp4fT+znl2pDjYeS6\nkhX6kXxDBVc4SWFAylSwbtE0cX76zksutKeTNsmywAEZL/JeSbMsvJpYZOChg0+a\ncijznvWCS0ONp11KATN418nmJ77+N4X/kC0AxSpuuKflXlBASEcLapG0b6etWfHA\nCRbkMFz/Wuye97oaH6LNhkxoJQKBgQDSHEhFeTNFHJ0okGaUzgHwOKv4BXBePqbG\nXQACO4hGdJ/OcFuk3du8d7QSEJV2Gc1BPRb+6ztfWVMcx86VaFcADcANtXaT/BPB\ni3BuZmZvWR2JnYhArrJ7CmfYiTP/8ABZzjRjMAllaE1o+5BCyDBDYC1nuOkancjv\n2hkKvMqIDQKBgG89+NgLqV53XAVgdiOwxi9fs71CgyElHoDt40iI6wNiT9rzBkcM\n4KtzKCyCGL9YhBEFilbIx6BzZ7jSMt3dOZ7UiR4euY1HAznjDafOZmHt4A000BmS\nbDUTjnIDzT5YSUcePp4xw7s1PxIc+p21UXVgEh924sBXN7N45sAH17qFAoGAXzBX\nAbqOIsJ65NS+1K2cLTPPnTcBmIDz16xsg5Zq/9h4SfOXYVLt6S2mFAUVYYMA/Yxq\nraTuqhzyzXgsPH4f5DNWjh9nEFZEsQu2LR4RTGLoQd9vyjYbQCkPsQc/2rTlw8nq\n7ADoUNv3LhfCXK8LRor9Jx+b4+YWEawSak3rx8UCgYEA4DsAYWO06JKzOiRwjDn1\nOHqRkTVxzwBTwJb8K5piF0ETemjAr2q0bbPEy1qWZfyAsthbxks6eUtHT6vXUe29\nrkh9cwuDTy/f+dA99EPctFgmTszgoJSThERoxZXUqEsoRkHZLAIH5zF6de1DS+F9\nAIVpf8jv6g6HB/NblsOc5Sc=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-rdsyi@red-social-memes.iam.gserviceaccount.com",
+  "client_id": "112846537250933225388",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-rdsyi%40red-social-memes.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com",
+  "emulators": {
+    "dataconnect": {
+      "dataDir": "dataconnect/.dataconnect/pgliteData"
+    }
+  },
+  "dataconnect": {
+    "source": "dataconnect"
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}
