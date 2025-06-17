@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const path = require ('path');
 const {db} = require('./firebase')
 
+
 const app = express();
 // const app1 = express();
 
@@ -24,4 +25,4 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use(express.static(path.join(__dirname, 'public')));
 
 
-module.exports = app ;
+module.exports = app;
