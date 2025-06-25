@@ -2322,7 +2322,54 @@ router.post('/bajar_mapa', async (req, res) => {
   
 
 });
+router.post('/bajar_comunidad_categoria', async (req, res) => {
 
+  try{
+    console.log("funcion iniciada: bajar_comunidad_categoria ");
+
+    const { uid, token, hora, categoria } = req.body
+
+   // const decodedToken = await admin.auth().verifyIdToken(token);
+
+   // if(decodedToken.uid === uid){
+
+      const horaTimestamp = new admin.firestore.Timestamp(
+        Math.floor(Number(hora._seconds)),
+        Math.floor(Number(hora._nanoseconds))
+      );
+
+  // console.log('nombre:',nombre);
+   const docRef = db.collection('comunidades');
+   const snapshot = await docRef.orderBy('hora','desc').where('hora', '<=', horaTimestamp).where('categoria', '==', categoria).limit(10).get();
+   //const snapshot = await docRef.where('nombre', '==', nombre).get();
+   if (snapshot.empty) {
+       console.log('No se encontro ninguna comunidad.');
+       res.send('No se encontro ninguna comunidad.');
+       return;
+   } 
+ 
+   else{
+ 
+ 
+ 
+       const docsData = snapshot.docs.map(doc => doc.data());
+     // console.log("los mapas encontrados son:",docsData)
+ 
+ 
+       res.send(docsData)
+ 
+ //  }
+ 
+    
+
+  }
+}
+  catch(error){
+    console.log("Error en bajar_comunidad:"+error)
+  }
+
+
+});
 router.post('/bajar_comunidad', async (req, res) => {
 
   try{
@@ -2366,7 +2413,7 @@ router.post('/bajar_comunidad', async (req, res) => {
   }
 }
   catch(error){
-    console.log("Error en bajar_comunidad:"+error)
+    console.log("Error en bajar_comunidad_categoria:"+error)
   }
 
 
@@ -2423,6 +2470,55 @@ router.post('/bajar_comunidad_2', async (req, res) => {
 });
 
 
+router.post('/bajar_comunidad_2_categoria', async (req, res) => {
+
+  try{
+    console.log("funcion iniciada: bajar_comunidad_2_categoria ");
+
+    const { uid, token, hora, categoria } = req.body
+
+  //  const decodedToken = await admin.auth().verifyIdToken(token);
+
+   // if(decodedToken.uid === uid){
+
+      const horaTimestamp = new admin.firestore.Timestamp(
+        Math.floor(Number(hora._seconds)),
+        Math.floor(Number(hora._nanoseconds))
+      );
+
+  // console.log('nombre:',nombre);
+   const docRef = db.collection('comunidades');
+   const snapshot = await docRef.orderBy('hora').where('hora', '>=', horaTimestamp).where('categoria', '==', categoria).limit(10).get();
+   //const snapshot = await docRef.where('nombre', '==', nombre).get();
+   if (snapshot.empty) {
+       console.log('No se encontro ninguna comunidad.');
+              res.send('No se encontro ninguna comunidad.');
+
+       return;
+   } 
+ 
+   else{
+ 
+ 
+ 
+       const docsData = snapshot.docs.map(doc => doc.data());
+     // console.log("los mapas encontrados son:",docsData)
+ 
+ 
+       res.send(docsData)
+ 
+   }
+ 
+    
+
+ // }
+}
+  catch(error){
+    console.log("Error en bajar_comunidad_2_categoria:"+error)
+  }
+
+
+});
 router.post('/bajar_comunidad_3', async (req, res) => {
 
   try{
@@ -2466,7 +2562,48 @@ router.post('/bajar_comunidad_3', async (req, res) => {
 
 });
 
+router.post('/bajar_comunidad_3_categoria', async (req, res) => {
 
+  try{
+    console.log("funcion iniciada: bajar_comunidad_3_categoria ");
+
+    const { uid, token, num_seguidores, categoria } = req.body
+
+   
+
+  // console.log('nombre:',nombre);
+   const docRef = db.collection('comunidades');
+  const snapshot = await docRef.orderBy('num_seguidores','desc').where('num_seguidores', '<=', num_seguidores).where('categoria','==', categoria).limit(10).get();
+   //const snapshot = await docRef.where('nombre', '==', nombre).get();
+   if (snapshot.empty) {
+       console.log('No se encontro ninguna comunidad.');
+              res.send('No se encontro ninguna comunidad.');
+
+       return;
+   } 
+ 
+   else{
+ 
+ 
+ 
+       const docsData = snapshot.docs.map(doc => doc.data());
+     // console.log("los mapas encontrados son:",docsData)
+ 
+ 
+       res.send(docsData)
+ 
+   }
+ 
+    
+
+  }
+
+  catch(error){
+    console.log("Error en bajar_comunidad_3_categoria:"+error)
+  }
+
+
+});
 router.post('/bajar_comunidad_4', async (req, res) => {
 
   try{
@@ -2507,12 +2644,56 @@ router.post('/bajar_comunidad_4', async (req, res) => {
   }
 
   catch(error){
-    console.log("Error en bajar_comunidad_3:"+error)
+    console.log("Error en bajar_comunidad_4:"+error)
   }
 
 
 });
+router.post('/bajar_comunidad_4_categoria', async (req, res) => {
 
+  try{
+    console.log("funcion iniciada: bajar_comunidad_4_categoria ");
+
+    const { uid, token, comunidades_seguidas, categoria} = req.body
+
+   
+
+    if(!comunidades_seguidas.epmty){
+  // console.log('nombre:',nombre);
+   const docRef = db.collection('comunidades');
+   const snapshot = await docRef.where('nombre', 'in', comunidades_seguidas).where('categoria', '==', categoria).limit(10).get();
+   //const snapshot = await docRef.where('nombre', '==', nombre).get();
+   if (snapshot.empty) {
+       console.log('No se encontro ninguna comunidad.');
+              res.send('No se encontro ninguna comunidad.');
+
+       return;
+   } 
+ 
+   else{
+ 
+ 
+ 
+       const docsData = snapshot.docs.map(doc => doc.data());
+     // console.log("los mapas encontrados son:",docsData)
+ 
+ 
+       res.send(docsData)
+ 
+   }
+    }
+
+ 
+    
+
+  }
+
+  catch(error){
+    console.log("Error en bajar_comunidad_4_categoria:"+error)
+  }
+
+
+});
 router.post('/modificar_comunidad', async (req, res) => {
 
   const { creador } = req.body
