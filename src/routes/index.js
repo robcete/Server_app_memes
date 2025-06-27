@@ -312,7 +312,7 @@ router.post('/auth1', async (req, res) => {
     try {
         const { email } = req.body; // Extraer el correo electrónico del cuerpo de la solicitud
         
-        consol
+        
         console.log("funcion iniciada: auth");
        
 
