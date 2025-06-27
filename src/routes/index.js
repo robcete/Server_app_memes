@@ -312,6 +312,7 @@ router.post('/auth1', async (req, res) => {
     try {
         const { email } = req.body; // Extraer el correo electrónico del cuerpo de la solicitud
         
+        consol
         console.log("funcion iniciada: auth");
        
 
@@ -663,7 +664,7 @@ res.send('Tema creado');
   
     // Definir el nuevo tamaño (aumentar resolución)
   const newWidth = 2800; // Ajusta según lo que necesites
-  const newHeight = 1500; // Mantén la proporción o ajusta manualmente
+  const newHeight = 8500; // Mantén la proporción o ajusta manualmente
   
   // Redimensionar la imagen con sharp
   const resizedImageBuffer = await sharp(imageBuffer).resize(newWidth, newHeight, { fit: "cover" }).toBuffer(); // Ajusta el modo de escalado
