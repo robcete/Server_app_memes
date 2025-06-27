@@ -663,7 +663,7 @@ res.send('Tema creado');
   
   
     // Definir el nuevo tamaño (aumentar resolución)
-  const newWidth = 2800; // Ajusta según lo que necesites
+  const newWidth = 6000; // Ajusta según lo que necesites
   const newHeight = 8500; // Mantén la proporción o ajusta manualmente
   
   // Redimensionar la imagen con sharp
