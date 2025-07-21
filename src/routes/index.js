@@ -91,8 +91,6 @@ async function Recibir_codigo_chat(codigo_chat, usuario_1, usuario_2) {
 
 
 
-
-
   if(!snapshot_usuario_1.empty){
     const codigo_chat = snapshot_usuario_1.docs[0].data().codigo_chat;
     return codigo_chat
@@ -172,6 +170,7 @@ chatNamespace.on('connection', async (socket) => {
     const usuario_1= mensajeRecibido.usuario_1
     const usuario_2 = mensajeRecibido.usuario_2
     const mensaje = mensajeRecibido.mensaje
+    const autor = mensajeRecibido.mensaje.autor
     const hora = admin.firestore.Timestamp.now();
     const codigo_chat = mensajeRecibido.codigo_chat
 
@@ -179,6 +178,66 @@ chatNamespace.on('connection', async (socket) => {
 
     console.log("codigo chat en Socket:",codigo_chat)
     console.log("codigo chat en Socket nuevo:",codigo)
+console.log("nombre 2:",usuario_2.nombre);
+
+        const docUsers = db.collection('/usuario');
+
+ const snapshot_usuario_1 = await docUsers.where('nombre','==', usuario_1.nombre).get();
+
+  const snapshot_usuario_2 = await docUsers.where('nombre','==', usuario_2.nombre).get();
+
+
+
+    if(autor != usuario_1.nombre){
+    const  notificaciones = snapshot_usuario_1.docs[0].data().notificaciones;
+ if(!notificaciones.includes("mensaje")){
+
+
+    
+    const doc = snapshot_usuario_1.docs[0];
+   
+
+    //mirar bé apartir de aquí
+
+    const id = doc.ref.id; 
+
+ //   console.log("la url del tema es:",id)
+
+
+    await db.collection('/usuario').doc(id).update({
+     
+        notificaciones: admin.firestore.FieldValue.arrayUnion("mensaje")
+
+  })
+
+  }
+
+    }
+    if (autor != usuario_2.nombre) {
+          const  notificaciones = snapshot_usuario_2.docs[0].data().notificaciones;
+           if(!notificaciones.includes("mensaje")){
+
+
+
+    const doc = snapshot_usuario_2.docs[0];
+   
+
+    //mirar bé apartir de aquí
+
+    const id = doc.ref.id; 
+
+ //   console.log("la url del tema es:",id)
+
+
+    await db.collection('/usuario').doc(id).update({
+     
+        notificaciones: admin.firestore.FieldValue.arrayUnion("mensaje")
+ 
+  })
+
+  }
+
+    }
 
      if(snapshot.empty){
  
@@ -321,7 +380,11 @@ router.post('/auth1', async (req, res) => {
        // console.log(email_base_de_datos)
 
         if(!email_base_de_datos.empty){
-            res.send('usuario existe');
+            
+         const doc = email_base_de_datos.docs[0].data();
+   
+         //console.log(doc);
+            res.send(doc);
         }
         else if(email_base_de_datos.empty){
         res.send('usuario no existe');
@@ -663,11 +726,10 @@ res.send('Tema creado');
   
   
     // Definir el nuevo tamaño (aumentar resolución)
-  const newWidth = 6000; // Ajusta según lo que necesites
-  const newHeight = 8500; // Mantén la proporción o ajusta manualmente
-  
+   const newWidth = 1200; // Ajusta según lo que necesites
+  const newHeight = 2000; // Mantén la proporción o ajusta
   // Redimensionar la imagen con sharp
-  const resizedImageBuffer = await sharp(imageBuffer).resize(newWidth, newHeight, { fit: "cover" }).toBuffer(); // Ajusta el modo de escalado
+  const resizedImageBuffer = await sharp(imageBuffer).resize(newWidth, newHeight, { fit: "inside" }).jpeg({ quality: 70 }).toBuffer(); // Ajusta el modo de escalado
   
    // console.log(req.files);
     
@@ -718,7 +780,7 @@ res.send('Tema creado');
      const foto_perfil = data.foto_perfil;
      const usuario = {nombre,foto_perfil}
      //mirar bé apartir de aquí
-  
+
      const id = doc.ref.id; 
   
      //console.log("El usuario de la publiacion es:",usuario)
@@ -763,6 +825,21 @@ res.send('Tema creado');
       codigo_publicacion,
       hora
     })
+
+  
+  const snapshot_usuario = await docRef.where('nombre', '==', nombre).get();
+
+  if(!snapshot_usuario.empty){
+    
+     const doc = snapshot_usuario.docs[0];
+     //const data  = doc.data();
+     const data = doc.data();
+     const id = doc.ref.id; 
+     await db.collection('/usuario').doc(id).update({
+     num_publicaciones : admin.firestore.FieldValue.increment(1)
+})
+  }
+
     //await db.collection('/usuario').doc(id).update({
      // publicaciones
   //});
@@ -1427,7 +1504,43 @@ const usuario = {
   foto_perfil:foto_perfil_usuario_likeado
 }
 const now = admin.firestore.Timestamp.now();
+      const notificaciones = usuario_likeado.docs[0].data().notificaciones;
+if(!notificaciones.includes("noti")){
 
+    
+      const doc = usuario_likeado.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+    notificaciones: admin.firestore.FieldValue.arrayUnion("noti")
+
+  })
+
+  }
+if(!notificaciones.includes("comunidad")){
+     notificaciones.push("comunidad");
+
+    
+      const doc = usuario_likeado.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+notificaciones: admin.firestore.FieldValue.arrayUnion("comunidad")
+  })
+
+  }
 const expires_at = admin.firestore.Timestamp.fromMillis(now.toMillis() + 6 * 24 * 60 * 60 * 1000);
 await db.collection('/Notificaciones').add({
  usuario,
@@ -1559,8 +1672,7 @@ router.post('/bajar_publicacion/comunidad', async (req, res) => {
 
 
 router.post('/bajar_publicacion', async (req, res) => {
-  const { _nanoseconds, _seconds} = req.body
-  //console.log(req.body);
+  const { _nanoseconds, _seconds, usuario} = req.body
   console.log("funcion iniciada: bajar_publicacion");
 
   //console.log(req.body);
@@ -1569,6 +1681,36 @@ router.post('/bajar_publicacion', async (req, res) => {
     Math.floor(Number(_seconds)),
     Math.floor(Number(_nanoseconds))
   );
+
+  const notificaciones = usuario.notificaciones
+   // console.log(notificaciones);
+
+  if(notificaciones.includes('home')){
+
+ //& const notificaciones2 = notificaciones.filter(item => item !== 'home');
+  //console.log(notificaciones2);
+ const docRef2 = db.collection('usuario');
+    const snapshot = await docRef2.where('nombre', '==', usuario.nombre).get();
+
+    
+    const doc = snapshot.docs[0];
+   
+
+    //mirar bé apartir de aquí
+
+    const id = doc.ref.id; 
+
+ //   console.log("la url del tema es:",id)
+
+
+    await db.collection('/usuario').doc(id).update({
+     
+      notificaciones:admin.firestore.FieldValue.arrayRemove('home')
+  })
+
+  }
+
+  
   const docRef = db.collection('publicaciones');
  // const snapshot = await docRef.where('descripcio', '==', descripcio).get();
 
@@ -1841,7 +1983,18 @@ router.post('/eliminar_publicacion', async (req, res) => {
   
        db.collection('/publicaciones').doc(id).delete();
   
-   
+     const snapshot_usuario = await docRef.where('nombre', '==', nombre).get();
+
+  if(!snapshot_usuario.empty){
+    
+     const doc = snsnapshot_usuario.docs[0];
+     //const data  = doc.data();
+     const data = doc.data();
+     const id = doc.ref.id; 
+     await db.collection('/usuario').doc(id).update({
+     num_publicaciones : admin.firestore.FieldValue.increment(-1)
+})
+  }
 
     res.send("Publicacion eliminada");
 
@@ -2225,8 +2378,8 @@ res.send(docsData);
 });
 
 router.post('/bajar_publicacion_usuario', async (req, res) => {
-  const { nombre, hora } = req.body
-  //console.log(req.body);
+  const { nombre, hora} = req.body
+ // console.log(req.body);
   console.log("funcion iniciada: bajar_publicacion_usuario");
 
   
@@ -2236,7 +2389,7 @@ router.post('/bajar_publicacion_usuario', async (req, res) => {
   Math.floor(Number(hora._seconds)),
   Math.floor(Number(hora._nanoseconds))
 );
-  const snapshot = await docRef.where('usuario.nombre', '==', nombre).orderBy('hora','desc').startAfter(horaTimestamp).limit(10).get();
+  const snapshot = await docRef.where('usuario.nombre', '==', nombre).orderBy('hora','desc').startAfter(horaTimestamp).limit(12).get();
   if (snapshot.empty) {
       console.log('No hay publicaciones');
       res.send('No hay publicaciones');
@@ -2249,6 +2402,7 @@ router.post('/bajar_publicacion_usuario', async (req, res) => {
       const docsData = snapshot.docs.map(doc => doc.data());
   
 
+  //    console.log(docsData);
       res.send(docsData)
 
   }
@@ -2376,8 +2530,31 @@ router.post('/bajar_comunidad', async (req, res) => {
   try{
     console.log("funcion iniciada: bajar_comunidad ");
 
-    const { uid, token, hora } = req.body
+    const { uid, token, hora, notificaciones, nombre } = req.body
+  //  console.log(notificaciones);
+  
+  if(notificaciones.includes('comunidad')){
 
+ const docRef2 = db.collection('usuario');
+    const snapshot = await docRef2.where('nombre', '==', nombre).get();
+
+    
+    const doc = snapshot.docs[0];
+   
+
+    //mirar bé apartir de aquí
+
+    const id = doc.ref.id; 
+
+ //   console.log("la url del tema es:",id)
+
+
+    await db.collection('/usuario').doc(id).update({
+     
+      notificaciones:admin.firestore.FieldValue.arrayRemove('comunidad')
+  })
+
+  }
    // const decodedToken = await admin.auth().verifyIdToken(token);
 
    // if(decodedToken.uid === uid){
@@ -2731,7 +2908,7 @@ console.log("funcion iniciada: modificar_comunidad");
 router.post('/modificar_likes/mensajes_privados', async (req, res) => {
   try {
     const { mensaje, codigo_chat, hora, nombre } = req.body;
-    console.log(req.body);
+   // console.log(req.body);
     console.log('funcion iniciada: modificar_likes/mensajes_privados');
 
     const horaTimestamp = new admin.firestore.Timestamp(
@@ -2784,10 +2961,10 @@ router.post('/modificar_likes/mensajes_privados', async (req, res) => {
 
 router.post('/modificar_likes', async (req, res) => {
 try{
-  const { nombre, fecha_publicacion, likes, nombre_iniciado, categoria, descripcio, codigo_publicacion, foto_perfil} = req.body
+  const { nombre, fecha_publicacion, likes, nombre_iniciado, categoria, descripcio, codigo_publicacion, foto_perfil, likeado} = req.body
 //console.log(nombre,fecha_publicacion);
-
-console.log(req.body);
+const num_likeados = parseInt(likeado,10);
+//console.log(req.body);
   const num_likes = JSON.parse(likes);
 
  //console.log(num_likes);
@@ -2836,7 +3013,7 @@ const likes_total = num_likes.length;
 
 
 await db.collection('/publicacion_likeada').doc(id).update({
-     num_likeados : admin.firestore.FieldValue.increment(1)
+     num_likeados : admin.firestore.FieldValue.increment(num_likeados)
 })
 
 
@@ -2870,8 +3047,9 @@ await db.collection('/publicacion_likeada').doc(id).update({
 //const num_likeados = num_likes.length;
 
 
+ 
 await db.collection('/publicacion_likeada_categoria').doc(id).update({
-     num_likeados : admin.firestore.FieldValue.increment(1)
+     num_likeados : admin.firestore.FieldValue.increment(num_likeados)
 })
 
 
@@ -2937,7 +3115,25 @@ await db.collection('/publicacion_likeada_categoria').doc(id).update({
   const usuario_likeado = await docRef_3.where('nombre', '==', nombre).get();
   const nombre_usuario_likeado = usuario_likeado.docs[0].data().nombre;
   const foto_perfil_usuario_likeado= usuario_likeado.docs[0].data().foto_perfil;
+      const notificaciones = usuario_likeado.docs[0].data().notificaciones;
+if(!notificaciones.includes("noti")){
 
+    
+      const doc = usuario_likeado.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+      notificaciones: admin.firestore.FieldValue.arrayUnion("noti")
+
+  })
+
+  }
   const usuario = {
     nombre:nombre_usuario_likeado,
     foto_perfil:foto_perfil_usuario_likeado
@@ -3122,7 +3318,45 @@ await db.collection('/publicacion_likeada_categoria').doc(id).update({
   const usuario_likeado = await docRef_3.where('nombre', '==', nombre).get();
   const nombre_usuario_likeado = usuario_likeado.docs[0].data().nombre;
   const foto_perfil_usuario_likeado= usuario_likeado.docs[0].data().foto_perfil;
+      const notificaciones = usuario_likeado.docs[0].data().notificaciones;
+if(!notificaciones.includes("noti")){
 
+    
+      const doc = usuario_likeado.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+     notificaciones: admin.firestore.FieldValue.arrayUnion("noti")
+
+  })
+
+  }
+        //const notificaciones = usuario_likeado.docs[0].data().notificaciones;
+if(!notificaciones.includes("comunidad")){
+
+    
+      const doc = usuario_likeado.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+     notificaciones: admin.firestore.FieldValue.arrayUnion("comunidad")
+
+
+  })
+
+  }
   const usuario = {
     nombre:nombre_usuario_likeado,
     foto_perfil:foto_perfil_usuario_likeado
@@ -3146,11 +3380,11 @@ await db.collection('/publicacion_likeada_categoria').doc(id).update({
 
   router.post('/modificar_likes/comentario_publi', async (req, res) => {
 
-    const { comentaris, usuario_iniciado, codigo_publicacion, publicacion} = req.body
+    const { comentaris, usuario_iniciado, codigo_publicacion, publicacion, likeado} = req.body
    
   //  console.log(descripcio);
 
-  
+  const num_likes = parseInt(likeado, 10);
   
     // console.log(comentarios);
     console.log("funcion iniciada: modificar_likes/comentario_publi");
@@ -3178,7 +3412,7 @@ await db.collection('/publicacion_likeada_categoria').doc(id).update({
    //const comentaris = publicacion.comentaris
       await db.collection('/comentaris_publicacion').doc(id).update({
         comentaris,
-        likes_total : admin.firestore.FieldValue.increment(1)
+        likes_total : admin.firestore.FieldValue.increment(num_likes)
     });
   
     const docRef_3 = db.collection('usuario');
@@ -3196,7 +3430,46 @@ await db.collection('/publicacion_likeada_categoria').doc(id).update({
     const usuario_likeado = await docRef_3.where('nombre', '==', comentaris.usuario.nombre).get();
     const nombre_iniciado_usuario_likeado = usuario_likeado.docs[0].data().nombre;
     const foto_perfil_usuario_likeado= usuario_likeado.docs[0].data().foto_perfil;
-  
+      const notificaciones = usuario_likeado.docs[0].data().notificaciones;
+if(!notificaciones.includes("noti")){
+     
+
+    
+      const doc = usuario_likeado.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+      notificaciones: admin.firestore.FieldValue.arrayUnion("noti")
+
+  })
+
+  }
+
+if(!notificaciones.includes("home")){
+
+    
+      const doc = usuario_likeado.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+      notificaciones: admin.firestore.FieldValue.arrayUnion("home")
+
+  })
+
+  }
+
     const usuario = {
       nombre:nombre_iniciado_usuario_likeado,
       foto_perfil:foto_perfil_usuario_likeado
@@ -3276,7 +3549,25 @@ router.post('/modificar_likes/comentario_publi/respuesta', async (req, res) => {
   const usuario_likeado = await docRef_3.where('nombre', '==', comentaris.usuario.nombre).get();
   const nombre_iniciado_usuario_likeado = usuario_likeado.docs[0].data().nombre;
   const foto_perfil_usuario_likeado= usuario_likeado.docs[0].data().foto_perfil;
+      const notificaciones = usuario_likeado.docs[0].data().notificaciones;
+if(!notificaciones.includes("noti")){
 
+    
+      const doc = usuario_likeado.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+     notificaciones: admin.firestore.FieldValue.arrayUnion("noti")
+
+  })
+
+  }
   const usuario = {
     nombre:nombre_iniciado_usuario_likeado,
     foto_perfil:foto_perfil_usuario_likeado
@@ -3792,12 +4083,37 @@ router.post('/eliminar_notificaciones', async (req, res) => {
 
 router.post('/bajar_notificaciones', async (req, res) => {
 
-  const { nombre } = req.body
-
+  const { nombre, notificaciones } = req.body
+//console.log(req.body);
 // console.log("nombre:",nombre);
 
   console.log("funcion iniciada: bajar_notificaciones");
+ // const notificaciones2 = Array(notificaciones)
+  if(notificaciones.includes('noti')){
+ const docRef2 = db.collection('usuario');
+    const snapshot_2 = await docRef2.where('nombre', '==', nombre).get();
 
+    
+    if(!snapshot_2.empty){
+  const doc = snapshot_2.docs[0];
+   
+
+    //mirar bé apartir de aquí
+
+    const id = doc.ref.id; 
+
+
+ //   console.log("la url del tema es:",id)
+
+
+    await db.collection('/usuario').doc(id).update({
+     
+      notificaciones:admin.firestore.FieldValue.arrayRemove('noti')
+  });
+
+    }
+   
+  }
  //  console.log("email:",email);
 //  console.log('nombre:',nombre);
   const docRef = db.collection('Notificaciones');
@@ -4106,9 +4422,46 @@ router.post('/modificar_likes/coment_foro', async (req, res) => {
  "en el comentario num serie:"+num_serie
   enviarNotificacion(token,titulo,texto)
 
+      const notificaciones = usuario_token.docs[0].data().notificaciones;
+if(!notificaciones.includes("noti")){
+     
 
+    
+      const doc = usuario_token.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+      notificaciones: admin.firestore.FieldValue.arrayUnion("noti")
+
+  })
+
+  }
   
+if(!notificaciones.includes("comunidad")){
 
+    
+      const doc = usuario_token.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+      notificaciones: admin.firestore.FieldValue.arrayUnion("comunidad")
+
+  })
+
+  }
+  
   const usuario_inciado = await docRef_3.where('nombre', '==', usuario_iniciado.nombre).get();
   const nombre_iniciado_nuevo = usuario_inciado.docs[0].data().nombre;
   const foto_perfil_iniciado= usuario_inciado.docs[0].data().foto_perfil;
@@ -4742,7 +5095,9 @@ router.post('/new-contact', async (req, res) => {
 
         console.log("funcion iniciada: new-contact");
 
-    
+     const snap = await db.collection('usuario').get();
+     const numero_users = snap.size;
+
         const nombre_base_de_datos = await db.collection('usuario').where('nombre', '==', nombre).get();
         //const telefono_base_de_datos = await db.collection('usuarios').where('telefono', '==', telefono).get();
         const email_base_de_datos = await db.collection('usuario').where('email', '==', email).get();
@@ -4759,10 +5114,23 @@ router.post('/new-contact', async (req, res) => {
             res.send('El email ya existe');
         }
         else {
+      //     const codigo_usuario = generarPalabraAleatoria(generarNumeroAleatori())+nombre+generarPalabraAleatoria(generarNumeroAleatorio())+generarPalabraAleatoria(generarNumeroAleatorio())
+const logros = ["miembro"];
+if (numero_users < 100) {
+  logros.push("jeroglifico");
+}
+if (numero_users < 10000) {
+  logros.push("anfora");
+}
+const notificaciones = ["hola"];
+      const num_publicaciones = 0
             await db.collection('usuario').add({
                 nombre,
                 email,
-                temas_favoritos2
+                temas_favoritos2,
+                num_publicaciones,
+                logros,
+                notificaciones
             })
 
             console.log(nombre_base_de_datos);
@@ -4826,20 +5194,46 @@ router.post('/buscar_mensajes_privados', async (req, res) => {
   try {
     
 
-    const { usuario_1, usuario_2 ,uid, token} = req.body;
+    const { usuario_1, usuario_2 ,uid, token, notificaciones} = req.body;
    //console.log(usuario_1);
     console.log("funcion iniciada:buscar_mensajes_privados ");
+  if(notificaciones.includes("mensaje")){
 
+ const docRef2 = db.collection('usuario');
+    const snapshot_2 = await docRef2.where('nombre', '==', usuario_1).get();
+
+    
+    if(!snapshot_2.empty){
+  const doc = snapshot_2.docs[0];
+   
+
+    //mirar bé apartir de aquí
+
+    const id = doc.ref.id; 
+
+
+ //   console.log("la url del tema es:",id)
+
+
+    await db.collection('/usuario').doc(id).update({
+     
+      notificaciones:admin.firestore.FieldValue.arrayRemove('mensaje')
+  });
+
+    }
+   
+  }
 
     const decodedToken = await admin.auth().verifyIdToken(token);
 
     if(decodedToken.uid === uid){
       const docRef = db.collection('mensaje_final');
-      const snapshot_usuario_1 = await docRef.where('usuario_1.nombre','==', usuario_1).get();
-
-      const snapshot_usuario_2 = await docRef.where('usuario_2.nombre','==', usuario_2).get();
-
-
+    //  const snapshot_usuario_1 = await docRef.where('usuario_1.nombre','==', usuario_1).orderBy('hora','desc').get();
+ const snapshot_usuario_1 = await docRef.where('usuario_1.nombre','==', usuario_1).get();
+     // const snapshot_usuario_2 = await docRef.where('usuario_2.nombre','==', usuario_2).orderBy('hora','desc').get();
+    
+    
+     const snapshot_usuario_2 = await docRef.where('usuario_2.nombre','==', usuario_2).get();
 
 
 
@@ -4866,7 +5260,7 @@ res.send(resultados);
     }
   } catch (error) {
       console.error('Error buscando mensajes:', error);
-      res.status(500).send('Error buscando mensajes');
+      res.status(500).send('Error buscando mensajes'); 
   }
 });
 
@@ -4923,6 +5317,26 @@ if(!snapshot_usuario_1.empty){
     const usuario_token = await docRef_3.where('nombre', '==', nombre_2).get();
 
     const token = usuario_token.docs[0].data().token;
+   
+     const notificaciones = usuario_token.docs[0].data().notificaciones;
+if(!notificaciones.includes("noti")){
+
+    
+      const doc = usuario_token.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+      notificaciones: admin.firestore.FieldValue.arrayUnion("noti")
+
+  })
+
+  }
   
    const titulo = "Has recibido un seguimiento"
    const texto = "El usuario:,"+nombre_iniciado+" te ha empezado a seguir"
@@ -4971,6 +5385,45 @@ const usuario_token = await docRef_3.where('nombre', '==', nombre_2).get();
 
 const token = usuario_token.docs[0].data().token;
 
+     const notificaciones = usuario_token.docs[0].data().notificaciones;
+if(!notificaciones.includes("noti")){
+    
+
+    
+      const doc = usuario_token.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+      notificaciones: admin.firestore.FieldValue.arrayUnion("noti")
+
+  })
+
+  }
+  
+if(!notificaciones.includes("home")){
+
+    
+      const doc = usuario_token.docs[0];
+   
+
+
+      //mirar bé apartir de aquí
+
+      const id = doc.ref.id; 
+
+          await db.collection('/usuario').doc(id).update({
+     
+      notificaciones: admin.firestore.FieldValue.arrayUnion("home")
+
+  })
+
+  }
 const titulo = "Has recibido un seguimiento"
 const texto = "El usuario:,"+nombre_iniciado+" te ha empezado a seguir"
 enviarNotificacion(token,titulo,texto)
@@ -4981,6 +5434,8 @@ enviarNotificacion(token,titulo,texto)
 const usuario_likeado = await docRef_3.where('nombre', '==', nombre_iniciado).get();
 const nombre_usuario_likeado = usuario_likeado.docs[0].data().nombre;
 const foto_perfil_usuario_likeado= usuario_likeado.docs[0].data().foto_perfil;
+
+  
 
 const usuario = {
   nombre:nombre_usuario_likeado,
