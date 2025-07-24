@@ -15,6 +15,15 @@ app.use(express.urlencoded({ limit: '50mb', extended: true })); // Cambia '10mb'
 // Aquí puedes continuar configurando tus rutas y middleware
 app.use(require("./routes/index"));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/privacy_policy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/privacy_policy.html'));
+});
+app.get('/delete_account', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/delete_account.html'));
+});
+
+
 // VIEJO
 // Middleware para analizar solicitudes JSON y URL codificadas
 // app1.use(bodyParser.json());

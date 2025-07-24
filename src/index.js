@@ -1,9 +1,9 @@
 
 const app = require('./app');
 
-app.listen(3000);
+app.listen(80);
 
-console.log('Server on port 3000'); 
+console.log('Server on port 80'); 
 
 
 //const { onRequest } = require("firebase-functions/v2/https");
