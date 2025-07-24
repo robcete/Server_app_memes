@@ -2791,7 +2791,8 @@ router.post('/bajar_comunidad_4', async (req, res) => {
 
    
 
-    if(!comunidades_seguidas.epmty){
+    console.log(comunidades_seguidas);
+    if(!comunidades_seguidas.empty){
   // console.log('nombre:',nombre);
    const docRef = db.collection('comunidades');
    const snapshot = await docRef.where('nombre', 'in', comunidades_seguidas).limit(10).get();

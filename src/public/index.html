@@ -1,11 +1,54 @@
-<form action="/new-contact" method="POST">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Eliminar Cuenta</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f2f2f2;
+      color: #333;
+    }
 
-<input type="text" name="nombre" placeholder="nombre">
-<input type="text" name="apellido" placeholder="apellido">
-<input type="text" name="telefono" placeholder="telefono">
-<input type="text" name="email" placeholder="email">
+    h1 {
+      color: #e74c3c;
+    }
 
-<button>submit</button>
+    ol {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin-bottom: 20px;
+    }
 
+    .alerta {
+      background-color: #ffe0e0;
+      color: #a94442;
+      padding: 15px;
+      border: 1px solid #ebccd1;
+      border-radius: 5px;
+      max-width: 600px;
+    }
+  </style>
+</head>
+<body>
 
-</form>
+  <h1>Eliminar Cuenta</h1>
+  <p>Para poder eliminar la cuenta tienes que hacer los siguientes pasos:</p>
+
+  <ol>
+    <li>Entrar en la app</li>
+    <li>Desplegar el menú lateral izquierdo</li>
+    <li>Ir a <strong>Ajustes</strong></li>
+    <li>Seleccionar <strong>Eliminar cuenta</strong></li>
+  </ol>
+
+  <div class="alerta">
+    <strong>Atención:</strong> Al eliminar la cuenta se eliminarán <u>todos tus datos</u> de forma permanente.
+  </div>
+
+</body>
+</html>
