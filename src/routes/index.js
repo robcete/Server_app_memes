@@ -19,7 +19,7 @@ const sharp = require('sharp');
 const {Router} = require("express");
 const {db, admin} = require('../firebase');
 
-const server = http.createServer(app_2);
+//const server = http.createServer(app_2);
 const io = new Server(server);
 
  //CHAT EN TIEMPO REAL
@@ -319,9 +319,13 @@ console.log("nombre 2:",usuario_2.nombre);
     console.log('Un cliente se ha desconectado del chat');
   });
 });
-server.listen(4000, () => {
-  console.log('Server is running on port 4000');
-});
+const server = https.createServer({
+  key: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/fullchain.pem')
+}, app_2);
+//server.listen(4000, () => {
+ // console.log('Server is running on port 4000');
+//});
  //CHAT EN TIEMPO REAL
   //chatNamespace.on('connection', (socket) => {
    //console.log('Un cliente se ha conectado al chat');
@@ -371,6 +375,7 @@ router.post('/auth1', async (req, res) => {
     try {
         const { email } = req.body; // Extraer el correo electrónico del cuerpo de la solicitud
         
+      //  console.log("email:",email);
         
         console.log("funcion iniciada: auth");
        
@@ -387,6 +392,7 @@ router.post('/auth1', async (req, res) => {
             res.send(doc);
         }
         else if(email_base_de_datos.empty){
+          
         res.send('usuario no existe');
 
         }
