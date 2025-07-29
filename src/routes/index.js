@@ -19,8 +19,8 @@ const sharp = require('sharp');
 const {Router} = require("express");
 const {db, admin} = require('../firebase');
 const options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/fullchain.pem'),
+  key: fs.readFileSync('/etc/letsencrypt/live/memebookinfo.com/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/memebookinfo.com/fullchain.pem'),
 };
 
 const server = https.createServer(options, app).listen(443, () => {
