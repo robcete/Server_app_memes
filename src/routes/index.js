@@ -23,7 +23,8 @@ const options = {
   cert: fs.readFileSync('/etc/letsencrypt/live/memebookinfo.com/fullchain.pem'),
 };
 
-const server = https.createServer(options, app).listen(443, () => {
+const server = https.createServer(options, app);
+server.listen(443, () => {
   console.log('Servidor HTTPS corriendo en puerto 443');
 });
 
