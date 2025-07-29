@@ -23,20 +23,28 @@ const options = {
   cert: fs.readFileSync('/etc/letsencrypt/live/memebookinfo.com/fullchain.pem'),
 };
 
-const server = https.createServer(options, app_2);
-server.listen(4000, () => {
-  console.log('Servidor HTTPS corriendo en puerto 4000');
-});
+
+
+//const server = https.createServer(options, app);
+//server.listen(443, () => {
+ // console.log('Servidor HTTPS corriendo en puerto 443');
+//});
 
 //const server = http.createServer(app_2);
-const io = new Server(server);
+//const io = new Server(server);
 
  //CHAT EN TIEMPO REAL
 //const io = new Server(server, {
  // path: '/chat' // Ruta específica para Socket.IO
 //});
 
-
+const socketApp = express(); // puede ser el mismo 'app' si querés
+const socketServer = https.createServer(options, socketApp);
+const io = new Server(socketServer, {
+  cors: {
+    origin: '*'
+  }
+});
 
 // Namespace para el chat
 const chatNamespace = io.of('/chat');
@@ -327,6 +335,10 @@ console.log("nombre 2:",usuario_2.nombre);
   socket.on('disconnect', () => {
     console.log('Un cliente se ha desconectado del chat');
   });
+});
+
+socketServer.listen(8443, () => {
+  console.log('Socket.io HTTPS corriendo en puerto 8443');
 });
 //const server = https.createServer({
  // key: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/privkey.pem'),
