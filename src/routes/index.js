@@ -7,7 +7,7 @@ const express = require('express');
 
  //CHAT EN TIEMPO REAL
 const { Server } = require('socket.io');
-const http = require('http');
+const https = require('https');
 
 const app_2 = express();
 
@@ -18,6 +18,14 @@ const sharp = require('sharp');
 
 const {Router} = require("express");
 const {db, admin} = require('../firebase');
+const options = {
+  key: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/fullchain.pem'),
+};
+
+const server = https.createServer(options, app).listen(443, () => {
+  console.log('Servidor HTTPS corriendo en puerto 443');
+});
 
 //const server = http.createServer(app_2);
 const io = new Server(server);
@@ -319,10 +327,10 @@ console.log("nombre 2:",usuario_2.nombre);
     console.log('Un cliente se ha desconectado del chat');
   });
 });
-const server = https.createServer({
-  key: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/fullchain.pem')
-}, app_2);
+//const server = https.createServer({
+ // key: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/privkey.pem'),
+ // cert: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/fullchain.pem')
+//}, app_2);
 //server.listen(4000, () => {
  // console.log('Server is running on port 4000');
 //});
