@@ -18,6 +18,8 @@ const sharp = require('sharp');
 
 const {Router} = require("express");
 const {db, admin} = require('../firebase');
+
+
 const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/memebookinfo.com/privkey.pem'),
   cert: fs.readFileSync('/etc/letsencrypt/live/memebookinfo.com/fullchain.pem'),
@@ -34,18 +36,18 @@ const options = {
 //const io = new Server(server);
 
  //CHAT EN TIEMPO REAL
-//const io = new Server(server, {
- // path: '/chat' // Ruta específica para Socket.IO
-//});
+
 
 const socketApp = express(); // puede ser el mismo 'app' si querés
 const socketServer = https.createServer(options, socketApp);
+//const io = new Server(socketServer, {
+  //cors: {
+   // origin: '*'
+  //}
+//});
 const io = new Server(socketServer, {
-  cors: {
-    origin: '*'
-  }
+  path: '/chat' // Ruta específica para Socket.IO
 });
-
 // Namespace para el chat
 const chatNamespace = io.of('/chat');
 
@@ -337,9 +339,17 @@ console.log("nombre 2:",usuario_2.nombre);
   });
 });
 
+
+
+
 socketServer.listen(8443, () => {
   console.log('Socket.io HTTPS corriendo en puerto 8443');
 });
+
+
+
+
+
 //const server = https.createServer({
  // key: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/privkey.pem'),
  // cert: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/fullchain.pem')
