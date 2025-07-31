@@ -7,8 +7,8 @@ const express = require('express');
 
  //CHAT EN TIEMPO REAL
 const { Server } = require('socket.io');
-const https = require('https');
-
+//const https = require('https');
+const http = require('http');
 const app_2 = express();
 
 const {subida} = require('../../multer');
