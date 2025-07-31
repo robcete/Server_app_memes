@@ -32,22 +32,22 @@ const options = {
  // console.log('Servidor HTTPS corriendo en puerto 443');
 //});
 
-//const server = http.createServer(app_2);
-//const io = new Server(server);
+const server = http.createServer(app_2);
+const io = new Server(server);
 
  //CHAT EN TIEMPO REAL
 
 
-const socketApp = express(); // puede ser el mismo 'app' si querés
-const socketServer = https.createServer(options, socketApp);
+//const socketApp = express(); // puede ser el mismo 'app' si querés
+//const socketServer = https.createServer(options, socketApp);
 //const io = new Server(socketServer, {
   //cors: {
    // origin: '*'
   //}
 //});
-const io = new Server(socketServer, {
-  path: '/chat' // Ruta específica para Socket.IO
-});
+///const io = new Server(socketServer, {
+ // path: '/chat' // Ruta específica para Socket.IO
+//});
 // Namespace para el chat
 const chatNamespace = io.of('/chat');
 
@@ -342,9 +342,9 @@ console.log("nombre 2:",usuario_2.nombre);
 
 
 
-socketServer.listen(8443, () => {
-  console.log('Socket.io HTTPS corriendo en puerto 8443');
-});
+//socketServer.listen(8443, () => {
+ // console.log('Socket.io HTTPS corriendo en puerto 8443');
+//});
 
 
 
@@ -354,9 +354,9 @@ socketServer.listen(8443, () => {
  // key: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/privkey.pem'),
  // cert: fs.readFileSync('/etc/letsencrypt/live/tudominio.com/fullchain.pem')
 //}, app_2);
-//server.listen(4000, () => {
- // console.log('Server is running on port 4000');
-//});
+server.listen(4000, () => {
+  console.log('Server is running on port 4000');
+});
  //CHAT EN TIEMPO REAL
   //chatNamespace.on('connection', (socket) => {
    //console.log('Un cliente se ha conectado al chat');
