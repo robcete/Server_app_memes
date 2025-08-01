@@ -14,6 +14,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true })); // Cambia '10mb'
 
 // Aquí puedes continuar configurando tus rutas y middleware
 app.use(require("./routes/index"));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/privacy_policy', (req, res) => {

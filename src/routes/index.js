@@ -9,7 +9,7 @@ const express = require('express');
 const { Server } = require('socket.io');
 //const https = require('https');
 const https = require('https');
-const app_2 = express();
+//const app_2 = express();
 
 const {subida} = require('../../multer');
 
@@ -38,9 +38,15 @@ const options = {
  //CHAT EN TIEMPO REAL
 
 
-const socketApp = express();
+//const socketApp = express();
  // puede ser el mismo 'app' si querés
-const socketServer = https.createServer(options, socketApp);
+//const socketServer = https.createServer(options, socketApp);
+//const io = new Server(socketServer, {
+ // cors: {
+  // origin: '*'
+  //}
+//});
+const socketServer = https.createServer(options, app);
 const io = new Server(socketServer, {
   cors: {
    origin: '*'
