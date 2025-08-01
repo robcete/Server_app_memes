@@ -1,7 +1,7 @@
 
 const fs = require("fs");
 const { format } = require('date-fns');
-const app = require('./../app');
+//const app = require('./../app');
 const express = require('express');
 
 
@@ -38,7 +38,7 @@ const options = {
  //CHAT EN TIEMPO REAL
 
 
-//const socketApp = express();
+const socketApp = express();
  // puede ser el mismo 'app' si querés
 //const socketServer = https.createServer(options, socketApp);
 //const io = new Server(socketServer, {
@@ -46,7 +46,7 @@ const options = {
   // origin: '*'
   //}
 //});
-const socketServer = https.createServer(options, app);
+const socketServer = https.createServer(options, socketApp);
 const io = new Server(socketServer, {
   cors: {
    origin: '*'
