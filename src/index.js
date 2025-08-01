@@ -19,7 +19,9 @@ const server = https.createServer(options, app);
 server.listen(443, () => {
   console.log('Servidor HTTPS corriendo en puerto 443');
 });
-
+server.get('/', (req, res) => {
+  res.send('¡Hola mundo HTTPS!');
+});
 //const { onRequest } = require("firebase-functions/v2/https");
 //const app = require("./app");
 

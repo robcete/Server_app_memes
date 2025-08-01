@@ -23,9 +23,7 @@ app.get('/delete_account', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/delete_account.html'));
 });
 
-app.get('/', (req, res) => {
-  res.send('¡Hola mundo HTTPS!');
-});
+
 
 // VIEJO
 // Middleware para analizar solicitudes JSON y URL codificadas
